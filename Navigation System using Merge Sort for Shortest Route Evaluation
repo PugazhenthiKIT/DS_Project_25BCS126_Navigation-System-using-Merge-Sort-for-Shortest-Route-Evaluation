@@ -1,0 +1,130 @@
+import java.util.*;
+class Route {
+String name;
+int distance;
+int traffic;
+int time;
+
+Route(String name, int distance, int traffic) {
+this.name = name;
+this.distance = distance;
+this.traffic = traffic;
+this.time = distance + traffic; // simple calculation
+}
+}
+
+public class NavigationSystem {
+
+static ArrayList<Route> list = new ArrayList<>();
+
+static void insert(String name, int distance, int traffic) {
+list.add(new Route(name, distance, traffic));
+}
+
+static void display() {
+
+for (Route r : list) {
+System.out.println(r.name + " Time: " + r.time);
+}
+}
+
+static void merge(int l, int m, int r) {
+int n1 = m - l + 1;
+int n2 = r - m;
+
+Route[] L = new Route[n1];
+Route[] R = new Route[n2];
+
+for (int i = 0; i < n1; i++)
+L[i] = list.get(l + i);
+
+for (int j = 0; j < n2; j++)
+R[j] = list.get(m + 1 + j);
+
+int i = 0, j = 0, k = l;
+
+while (i < n1 && j < n2) {
+if (L[i].time <= R[j].time) {
+list.set(k, L[i]);
+i++;
+} else {
+list.set(k, R[j]);
+
+j++;
+}
+k++;
+}
+
+while (i < n1) {
+list.set(k, L[i]);
+i++;
+k++;
+}
+
+while (j < n2) {
+list.set(k, R[j]);
+j++;
+k++;
+}
+}
+
+static void mergeSort(int l, int r) {
+if (l < r) {
+int m = (l + r) / 2;
+mergeSort(l, m);
+mergeSort(m + 1, r);
+merge(l, m, r);
+}
+}
+
+static void search(String key) {
+for (Route r : list) {
+if (r.name.equalsIgnoreCase(key)) {
+System.out.println("Found: " + r.name);
+return;
+}
+}
+System.out.println("Not Found");
+}
+
+public static void main(String[] args) {
+Scanner sc = new Scanner(System.in);
+
+while (true) {
+System.out.println("\n1.Insert 2.Display 3.Sort 4.Search 5.Exit");
+int ch = sc.nextInt();
+sc.nextLine();
+
+switch (ch) {
+case 1:
+System.out.print("Enter route name: ");
+String name = sc.nextLine();
+System.out.print("Enter distance: ");
+int d = sc.nextInt();
+System.out.print("Enter traffic: ");
+
+int t = sc.nextInt();
+insert(name, d, t);
+break;
+
+case 2:
+display();
+break;
+
+case 3:
+mergeSort(0, list.size() - 1);
+System.out.println("Sorted using Merge Sort");
+break;
+
+case 4:
+System.out.print("Enter route name: ");
+String key = sc.nextLine();
+search(key);
+break;
+
+case 5:
+System.exit(0);
+}
+}
+}
+}
